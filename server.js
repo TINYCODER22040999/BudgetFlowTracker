@@ -19,23 +19,22 @@ app.use(morgan('dev'));
 app.use(express.json());
 
 const allowedOrigins = [
-  process.env.FRONTEND_URL, // e.g. https://your-app.onrender.com
-  'http://localhost:3000'
+  'https://expense-tracking-record.onrender.com', // your frontend URL
+  'http://localhost:3000'                         // for local dev if needed
 ].filter(Boolean);
 
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      if (!origin) return callback(null, true);
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      } else {
-        return callback(new Error('CORS policy: This origin is not allowed'), false);
-      }
-    },
-    credentials: true
-  })
-);
+app.use(cors({
+  origin: function(origin, callback) {
+    if (!origin) return callback(null, true); // allow non-browser tools like curl
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('CORS policy: This origin is not allowed'), false);
+    }
+  },
+  credentials: true // if you send cookies/auth headers
+}));
+
 
 // routes
 app.use('/api/v1/users', require('./routes/userRoute'));
